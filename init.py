@@ -14,13 +14,15 @@ while True:
         if event.type == QUIT:
             exit_game()
         elif event.type == MOUSEBUTTONDOWN:
-            flag = not flag
-            picture = cross if flag else circle
+
             mouse_pos = pygame.mouse.get_pos()
-            act_cell = get_active_cell(surf, mouse_pos)
+            act_cell = get_active_cell(mouse_pos)
             if tilemap[act_cell[0]][act_cell[1]] == EMPTY:
+                flag = not flag
+                picture = cross if flag else circle
                 tilemap[act_cell[0]][act_cell[1]] = CROSS if flag else CIRCLE
                 surf.blit(picture, (act_cell[1] * TILESIZE, act_cell[0] * TILESIZE, TILESIZE, TILESIZE))
                 next_turn(tilemap, act_cell)
             print(tilemap)
     pygame.display.update()
+
