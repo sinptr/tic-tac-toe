@@ -4,6 +4,7 @@ from source.constants import *
 import collections
 import numpy as np
 
+
 def load_picture(filepath):
     """
     :param      filepath: path to file
@@ -50,36 +51,26 @@ def is_win(tilemap, coordinate_of_last_move):
         return CROSS
     elif cc.get(CIRCLE) == MAPWIDTH:
         return CIRCLE
-    print('column')
-
     trans = np.transpose(tilemap)
     cc = element_count(trans[coordinate_of_last_move[0]])
     if cc.get(CROSS) == MAPWIDTH:
         return CROSS
     elif cc.get(CIRCLE) == MAPWIDTH:
         return CIRCLE
-    print('diag')
-
-    markdown = 0
     if coordinate_of_last_move[0] == coordinate_of_last_move[1]:
-        #TODO: Получить главную диагональ и считать количество элементов с помощью функции гет элеент каунт
-        pd = np.trace(tilemap) / len(tilemap)
-        print(pd)
-        if pd == CROSS:
+        pd = np.diag(tilemap)
+        cc = element_count(pd)
+        if cc.get(CROSS) == MAPWIDTH:
             return CROSS
-        elif pd == CIRCLE:
+        elif cc.get(CIRCLE) == MAPWIDTH:
             return CIRCLE
-    print('subrow')
-    if coordinate_of_last_move[0] == len(tilemap) + markdown - coordinate_of_last_move[1] - 1:
-        spisok = [tilemap[i][len(tilemap) + markdown - 1 - i] for i in range(len(tilemap))]
-        print('sosi')
-        s = sum(spisok)
-        pd = s / len(tilemap)
-        if pd == CROSS:
+    if coordinate_of_last_move[0] == len(tilemap) - coordinate_of_last_move[1] - 1:
+        spisok = [tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))]
+        cc = element_count(spisok)
+        if cc.get(CROSS) == MAPWIDTH:
             return CROSS
-        elif pd == CIRCLE:
+        elif cc.get(CIRCLE) == MAPWIDTH:
             return CIRCLE
-
     return False
 
 
