@@ -23,10 +23,6 @@ while True:
                 tilemap[act_cell[0]][act_cell[1]] = CROSS if flag else CIRCLE
                 surf.blit(picture, (act_cell[1] * TILESIZE, act_cell[0] * TILESIZE, TILESIZE, TILESIZE))
                 next_turn(tilemap, act_cell)
-                print(is_win(tilemap, act_cell))
             print(tilemap)
-
-
-
     pygame.display.update()
 

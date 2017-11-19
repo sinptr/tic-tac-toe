@@ -5,6 +5,13 @@ import collections
 import numpy as np
 
 
+def get_key(d, value):
+    for k, v in d.items():
+        if v == value:
+            return k
+    return 0
+
+
 def load_picture(filepath):
     """
     :param      filepath: path to file
@@ -91,6 +98,48 @@ def element_count(el_list, element=None):
     return count
 
 
+def get_row_same_state(arr):
+    """
+    :param arr:
+    :return:
+    """
+    i = 0
+    for row in arr:
+        p = element_count(row)
+        if get_key(p, MAPWIDTH - 1):
+            break
+        i += 1
+    column = 0
+    if i != len(arr):
+        print(i)
+        for j in arr[i]:
+            if j == EMPTY:
+                return i, column
+            column += 1
+    return 0
+
+
+def two_dicks_in_one_chick(tilemap):
+    coord = get_row_same_state(tilemap)
+    if coord:
+        return coord
+    coord = get_row_same_state(list(np.transpose(tilemap)))
+    if coord:
+        return coord[1], coord[0]
+    diags = list()
+    diags.append(list(np.diag(tilemap)))
+    diags.append([tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))])
+    coord = get_row_same_state(diags)
+    if coord:
+        if coord[0] == 0:
+            return coord[1], coord[1]
+        else:
+            return coord[1], MAPHEIGHT - 1 - coord[1]
+    return 0
+
+
+
+
 def next_turn(tilemap, active_cell=0):
     """
 
@@ -99,7 +148,28 @@ def next_turn(tilemap, active_cell=0):
     :return:
     """
     #TODO захерачить определение следующего хода, возвращать tuple клетки в которую ходить
-    return  #(x, y)
+    # надо достать все линии и проверить есть ли н-1 заполненых одинакова
+    # everything_in_one = []
+    # for row in tilemap:
+    #     everything_in_one.append(row)
+    # for row in np.transpose(tilemap):
+    #     everything_in_one.append(list(row))
+
+    coord = get_row_same_state(tilemap)
+    if coord:
+        return coord
+    coord = get_row_same_state(list(np.transpose(tilemap)))
+    if coord:
+        return coord[1], coord[0]
+    diags = list()
+    diags.append(list(np.diag(tilemap)))
+    diags.append([tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))])
+    coord = get_row_same_state(diags)
+    if coord:
+        if coord[0] == 0:
+            return coord[1], coord[1]
+        else:
+            return coord[1], MAPHEIGHT - 1 - coord[1]
 
 
 def get_active_cell(mouse_pos):
