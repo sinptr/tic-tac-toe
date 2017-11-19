@@ -1,0 +1,8 @@
+import os
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+MAPWIDTH = MAPHEIGHT = 3
+TILESIZE = int(600/(MAPWIDTH))
+EMPTY = 0
+CROSS = 1
+CIRCLE = 2
