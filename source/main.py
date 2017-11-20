@@ -6,6 +6,13 @@ import numpy as np
 
 
 def get_key(d, value):
+    """
+    :param      d: source dictionary
+
+    :param      value: value in d
+
+    :return:    k: key accordingly to value v
+    """
     for k, v in d.items():
         if v == value:
             return k
@@ -38,20 +45,19 @@ def draw_grid(display_surf, width=1):
 
 
 def exit_game():
-    """
-
-    :return:
-    """
     pygame.display.quit()
     sys.exit()
 
 
 def is_win(tilemap, coordinate_of_last_move):
     """
-    BY PIOTR SLENKEN
-    :param tilemap:
-    :param coordinate_of_last_move:
-    :return:
+    :param      tilemap:    Game field
+
+    :param      coordinate_of_last_move:    previous move
+
+    :return:    CROSS if CROSS should be putted
+                CIRCLE if CIRCLE should be putted
+                False if can't determine next step
     """
     cc = element_count(tilemap[coordinate_of_last_move[0]])
     if cc.get(CROSS) == MAPWIDTH:
@@ -100,8 +106,13 @@ def element_count(el_list, element=None):
 
 def get_row_same_state(arr):
     """
-    :param arr:
-    :return:
+    :param      arr:    string list
+                        strings from game field:
+                            - rows,
+                            - columns,
+                            - diagonals
+
+    :return:    (i, column): coordinates of next step
     """
     i = 0
     for row in arr:
@@ -120,12 +131,24 @@ def get_row_same_state(arr):
 
 
 def two_dicks_in_one_chick(tilemap):
+    """
+    :param      tilemap:    Game field
+
+    :return:    coord:      coordanates of next step
+
+    For first situation in situation list: alchogorithm tic-tac-toe
+    """
+    # Rows
     coord = get_row_same_state(tilemap)
     if coord:
         return coord
+
+    # Columns
     coord = get_row_same_state(list(np.transpose(tilemap)))
     if coord:
         return coord[1], coord[0]
+
+    # Diagonals
     diags = list()
     diags.append(list(np.diag(tilemap)))
     diags.append([tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))])
@@ -135,41 +158,18 @@ def two_dicks_in_one_chick(tilemap):
             return coord[1], coord[1]
         else:
             return coord[1], MAPHEIGHT - 1 - coord[1]
+
+    # Either
     return 0
-
-
 
 
 def next_turn(tilemap, active_cell=0):
     """
-
     :param tilemap:
     :param active_cell:
     :return:
     """
-    #TODO захерачить определение следующего хода, возвращать tuple клетки в которую ходить
-    # надо достать все линии и проверить есть ли н-1 заполненых одинакова
-    # everything_in_one = []
-    # for row in tilemap:
-    #     everything_in_one.append(row)
-    # for row in np.transpose(tilemap):
-    #     everything_in_one.append(list(row))
-
-    coord = get_row_same_state(tilemap)
-    if coord:
-        return coord
-    coord = get_row_same_state(list(np.transpose(tilemap)))
-    if coord:
-        return coord[1], coord[0]
-    diags = list()
-    diags.append(list(np.diag(tilemap)))
-    diags.append([tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))])
-    coord = get_row_same_state(diags)
-    if coord:
-        if coord[0] == 0:
-            return coord[1], coord[1]
-        else:
-            return coord[1], MAPHEIGHT - 1 - coord[1]
+    ...
 
 
 def get_active_cell(mouse_pos):

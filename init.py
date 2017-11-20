@@ -14,7 +14,6 @@ while True:
         if event.type == QUIT:
             exit_game()
         elif event.type == MOUSEBUTTONDOWN:
-
             mouse_pos = pygame.mouse.get_pos()
             act_cell = get_active_cell(mouse_pos)
             if tilemap[act_cell[0]][act_cell[1]] == EMPTY:
