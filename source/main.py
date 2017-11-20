@@ -130,6 +130,11 @@ def get_row_same_state(arr):
     return 0
 
 
+def butt_plug(black_hole_of_your_ex, last_orgasm):
+    #TODO: title 2 in alco.doc plz sempai marka do it for me i'll ...
+    return 0
+
+
 def two_dicks_in_one_chick(tilemap):
     """
     :param      tilemap:    Game field
@@ -164,20 +169,21 @@ def two_dicks_in_one_chick(tilemap):
 
 
 def two_guys_one_cup(tilemap, last_move):
+    creampie = 0
     if last_move in ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1)):
         if last_move[0] == last_move[1]:
             if last_move[0] != MAPHEIGHT - 1:
-                oposite_cell = MAPHEIGHT - 1, MAPWIDTH - 1
+                opposite_cell = MAPHEIGHT - 1, MAPWIDTH - 1
             else:
-                oposite_cell = 0, 0
+                opposite_cell = 0, 0
         else:
             if last_move[0] != MAPHEIGHT - 1:
-                oposite_cell = MAPHEIGHT - 1, 0
+                opposite_cell = MAPHEIGHT - 1, 0
             else:
-                oposite_cell = 0, MAPWIDTH - 1
-        if tilemap[oposite_cell[0]][oposite_cell[1]] == EMPTY:
-            return oposite_cell
-    return 0
+                opposite_cell = 0, MAPWIDTH - 1
+        if tilemap[opposite_cell[0]][opposite_cell[1]] == EMPTY:
+            return opposite_cell
+    return creampie
 
 
 def mfm(tilemap):
