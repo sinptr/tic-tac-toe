@@ -163,13 +163,68 @@ def two_dicks_in_one_chick(tilemap):
     return 0
 
 
-def next_turn(tilemap, active_cell=0):
+def two_guys_one_cup(tilemap, last_move):
+    if last_move in ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1)):
+        if last_move[0] == last_move[1]:
+            if last_move[0] != MAPHEIGHT - 1:
+                oposite_cell = MAPHEIGHT - 1, MAPWIDTH - 1
+            else:
+                oposite_cell = 0, 0
+        else:
+            if last_move[0] != MAPHEIGHT - 1:
+                oposite_cell = MAPHEIGHT - 1, 0
+            else:
+                oposite_cell = 0, MAPWIDTH - 1
+        if tilemap[oposite_cell[0]][oposite_cell[1]] == EMPTY:
+            return oposite_cell
+    return 0
+
+
+def mfm(tilemap):
+    if MAPWIDTH % 2 == MAPHEIGHT % 2 == 1:
+        cell = MAPHEIGHT // 2, MAPWIDTH // 2
+        if tilemap[cell[0]][cell[1]] == EMPTY:
+            return cell
+    return 0
+
+
+def gangbang(tilemap):
+    pussy = 0
+    ass = 1
+    chicks = ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1))
+    for bitch in chicks:
+        if tilemap[bitch[pussy]][bitch[ass]] == EMPTY:
+            return bitch
+    return 0
+
+
+def jerk_off(collection):
+    for genre in range(MAPHEIGHT):
+        for fetish in range(MAPWIDTH):
+            if collection[genre][fetish] == EMPTY:
+                return genre, fetish
+    return 0
+
+
+def next_turn(tilemap, last_move):
     """
     :param tilemap:
     :param active_cell:
     :return:
     """
-    ...
+    cell = two_dicks_in_one_chick(tilemap)
+    if cell:
+        return cell
+    cell = mfm(tilemap)
+    if cell:
+        return cell
+    cell = two_guys_one_cup(tilemap, last_move)
+    if cell:
+        return cell
+    cell = gangbang(tilemap)
+    if cell:
+        return cell
+    return jerk_off(tilemap)
 
 
 def get_active_cell(mouse_pos):
