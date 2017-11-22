@@ -130,6 +130,11 @@ def get_row_same_state(arr):
     return 0
 
 
+def butt_plug(black_hole_of_your_ex, last_orgasm):
+    #TODO: title 2 in alco.doc plz sempai marka do it for me i'll ...
+    return 0
+
+
 def two_dicks_in_one_chick(tilemap):
     """
     :param      tilemap:    Game field
@@ -163,13 +168,95 @@ def two_dicks_in_one_chick(tilemap):
     return 0
 
 
-def next_turn(tilemap, active_cell=0):
+def two_guys_one_cup(tilemap, last_move):
     """
-    :param tilemap:
-    :param active_cell:
-    :return:
+    :param      tilemap: you know what it is
+
+    :param      last_move: great moves keep it up proud of you
+
+    :return:    creampie: just taste it... mmm... yummy-yummy
     """
-    ...
+    creampie = 0
+    if last_move in ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1)):
+        if last_move[0] == last_move[1]:
+            if last_move[0] != MAPHEIGHT - 1:
+                opposite_cell = MAPHEIGHT - 1, MAPWIDTH - 1
+            else:
+                opposite_cell = 0, 0
+        else:
+            if last_move[0] != MAPHEIGHT - 1:
+                opposite_cell = MAPHEIGHT - 1, 0
+            else:
+                opposite_cell = 0, MAPWIDTH - 1
+        if tilemap[opposite_cell[0]][opposite_cell[1]] == EMPTY:
+            return opposite_cell
+    return creampie
+
+
+def mfm(tilemap):
+    """
+    :param      tilemap: Yes...
+
+    :return:    cell: (x, y)
+    """
+    if MAPWIDTH % 2 == MAPHEIGHT % 2 == 1:
+        cell = MAPHEIGHT // 2, MAPWIDTH // 2
+        if tilemap[cell[0]][cell[1]] == EMPTY:
+            return cell
+    return 0
+
+
+def gangbang(tilemap):
+    """
+    :param      tilemap: Game field
+
+    :return:    bitch: your ex
+    """
+    pussy = 0
+    ass = 1
+    chicks = ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1))
+    for bitch in chicks:
+        if tilemap[bitch[pussy]][bitch[ass]] == EMPTY:
+            return bitch
+    return 0
+
+
+def jerk_off(collection):
+    """
+    :param      collection: your porn
+
+    :return:    (genre, fetish): you know what it is
+    """
+    for genre in range(MAPHEIGHT):
+        for fetish in range(MAPWIDTH):
+            if collection[genre][fetish] == EMPTY:
+                return genre, fetish
+    return 0
+
+
+def next_turn(tilemap, last_move):
+    """
+    :param      tilemap: Game field
+
+    :param      last_move: previous move
+
+    :return:    cell: (x, y)
+
+    Very Nice.
+    """
+    cell = two_dicks_in_one_chick(tilemap)
+    if cell:
+        return cell
+    cell = mfm(tilemap)
+    if cell:
+        return cell
+    cell = two_guys_one_cup(tilemap, last_move)
+    if cell:
+        return cell
+    cell = gangbang(tilemap)
+    if cell:
+        return cell
+    return jerk_off(tilemap)
 
 
 def get_active_cell(mouse_pos):
