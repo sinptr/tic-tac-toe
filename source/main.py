@@ -1,8 +1,36 @@
-import pygame
-import sys
 from source.constants import *
+from copy import deepcopy
 import collections
 import numpy as np
+import pygame
+import sys
+
+
+def get_markup_matrix(coord_param, matrix_param):
+    """
+    :param      coord_param:    tuple (x, y)
+
+    :param      matrix_param:   matrix to markup
+
+    :return:    tmp_matrix:     markuped matrix
+
+    Marks the x-th row and y-th column of tmp_matrix with *
+    """
+    tmp_matrix = matrix_param
+    for i in range(len(tmp_matrix)):
+        tmp_matrix[coord_param[0]][i] = '*'
+    for j in range(len(tmp_matrix)):
+        tmp_matrix[j][coord_param[1]] = '*'
+    return tmp_matrix
+
+
+def get_safe_copy(matrix_param):
+    """
+    :param      matrix_param:   some matrix
+
+    :return:    Safe copy of matrix_param using copy.deepcopy() from copy module
+    """
+    return deepcopy(matrix_param)
 
 
 def get_key(d, value):
@@ -78,8 +106,8 @@ def is_win(tilemap, coordinate_of_last_move):
         elif cc.get(CIRCLE) == MAPWIDTH:
             return CIRCLE
     if coordinate_of_last_move[0] == len(tilemap) - coordinate_of_last_move[1] - 1:
-        spisok = [tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))]
-        cc = element_count(spisok)
+        lst = [tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))]
+        cc = element_count(lst)
         if cc.get(CROSS) == MAPWIDTH:
             return CROSS
         elif cc.get(CIRCLE) == MAPWIDTH:
@@ -104,72 +132,205 @@ def element_count(el_list, element=None):
     return count
 
 
-def get_row_same_state(arr):
+def get_opposite_figure(figure_param):
     """
-    :param      arr:    string list
-                        strings from game field:
-                            - rows,
-                            - columns,
-                            - diagonals
+    :param      figure_param:   CROSS or CIRCLE
 
-    :return:    (i, column): coordinates of next step
+    :return:    Opposite figure for figure_param
+    """
+    return CROSS if figure_param == CIRCLE else CIRCLE
+
+
+def second_rule(matrix_param, prev_step):
+    """
+    :param      matrix_param:   game field
+
+    :param      prev_step:      coordinates of previous step
+
+    :return:    coordinates of next step
+
+    Title 2 from algo.doc.
+    Creates two lines with two markups
+    """
+    if matrix_param[prev_step[0]][prev_step[1]] == CROSS:
+        current_figure = CIRCLE
+    else:
+        current_figure = CROSS
+    for i in range(len(matrix_param)):
+        for j in range(len(matrix_param)):
+            if matrix_param[i][j] == current_figure:
+                less_matrix = get_markup_matrix((i, j), get_safe_copy(matrix_param))
+                for p in range(len(less_matrix)):
+                    for q in range(len(less_matrix)):
+                        if less_matrix[p][q] == current_figure:
+                            if matrix_param[i][q] != CIRCLE and matrix_param[i][q] != CROSS:
+                                if not (element_count(matrix_param[p], get_opposite_figure(current_figure))):
+                                    return i, q
+                            if matrix_param[p][j] != CIRCLE and matrix_param[p][j] != CROSS:
+                                if not (element_count(np.transpose(matrix_param)[q],
+                                                      get_opposite_figure(current_figure))):
+                                    return p, j
+    return 0
+
+
+def track_duplicates(matrix_param):
+    """
+    :param      matrix_param: some matrix
+
+    :return:    (i, column) or 0
+
+    Finds the duplicates elements if matrix_param, and returns coordinate's tuple (i, column)
+    which is placed in lane with duplicates with empty slot in (i, column) - coordinates.
+
+    If there's no line with such properties returns 0
     """
     i = 0
-    for row in arr:
+    for row in matrix_param:
         p = element_count(row)
-        if get_key(p, MAPWIDTH - 1):
+        if get_key(p, 2) and get_key(p, 1) == EMPTY:
             break
         i += 1
     column = 0
-    if i != len(arr):
-        print(i)
-        for j in arr[i]:
-            if j == EMPTY:
+    if i != len(matrix_param):
+        for j in matrix_param[i]:
+            if j == 0:
                 return i, column
             column += 1
     return 0
 
 
-def two_dicks_in_one_chick(tilemap):
+def first_rule(tilemap):
     """
     :param      tilemap:    Game field
 
-    :return:    coord:      coordanates of next step
+    :return:    coord:      coordinates of next step
 
-    For first situation in situation list: alchogorithm tic-tac-toe
+    Title 1 from algo.doc.
+    Creates one fully filled line.
     """
-    # Rows
-    coord = get_row_same_state(tilemap)
+    coord = track_duplicates(tilemap)
     if coord:
         return coord
-
-    # Columns
-    coord = get_row_same_state(list(np.transpose(tilemap)))
+    coord = track_duplicates(list(np.transpose(tilemap)))
     if coord:
         return coord[1], coord[0]
-
-    # Diagonals
     diags = list()
     diags.append(list(np.diag(tilemap)))
     diags.append([tilemap[i][len(tilemap) - 1 - i] for i in range(len(tilemap))])
-    coord = get_row_same_state(diags)
+    coord = track_duplicates(diags)
     if coord:
         if coord[0] == 0:
             return coord[1], coord[1]
         else:
             return coord[1], MAPHEIGHT - 1 - coord[1]
-
-    # Either
     return 0
 
 
-def next_turn(tilemap, active_cell=0):
+def fourth_rule(tilemap, last_move):
     """
-    :param tilemap:
-    :param active_cell:
-    :return:
+    :param      tilemap: game field
+
+    :param      last_move: previous step
+
+    :return:    coordinates of the next step
+
+    Title 4 from algo.doc.
+    Places the mark in opposite angle to enemy's angle
     """
-    ...
+    if last_move in ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1)):
+        if last_move[0] == last_move[1]:
+            if last_move[0] != MAPHEIGHT - 1:
+                opposite_cell = MAPHEIGHT - 1, MAPWIDTH - 1
+            else:
+                opposite_cell = 0, 0
+        else:
+            if last_move[0] != MAPHEIGHT - 1:
+                opposite_cell = MAPHEIGHT - 1, 0
+            else:
+                opposite_cell = 0, MAPWIDTH - 1
+        if tilemap[opposite_cell[0]][opposite_cell[1]] == EMPTY:
+            return opposite_cell
+    return 0
+
+
+def third_rule(tilemap):
+    """
+    :param      tilemap:    game field
+
+    :return:    cell:       (x, y)
+
+    Title 3 from algo.doc.
+    Places figure in central cell.
+    """
+    if MAPWIDTH % 2 == MAPHEIGHT % 2 == 1:
+        cell = MAPHEIGHT // 2, MAPWIDTH // 2
+        if tilemap[cell[0]][cell[1]] == EMPTY:
+            return cell
+    return 0
+
+
+def fifth_rule(tilemap):
+    """
+    :param      tilemap: Game field
+
+    :return:    option: coordinates of next step
+
+    Title 5 from algo.doc.
+    Places mark in free angle cell.
+    """
+    options = ((0, 0), (0, MAPWIDTH - 1), (MAPHEIGHT - 1, 0), (MAPHEIGHT - 1, MAPWIDTH - 1))
+    for option in options:
+        if tilemap[option[0]][option[1]] == EMPTY:
+            return option
+    return 0
+
+
+def sixth_rule(tilemap):
+    """
+    :param      tilemap:    game field
+
+    :return:    (i, j):     next empty cell coordinates
+
+    Title 6 from algo.doc.
+    Places the mark in first empty found cell
+    """
+    for i in range(MAPHEIGHT):
+        for j in range(MAPWIDTH):
+            if tilemap[i][j] == EMPTY:
+                return i, j
+    return 0
+
+
+def next_turn(tilemap, last_move):
+    """
+    :param      tilemap: Game field
+
+    :param      last_move: previous move
+
+    :return:    cell: (x, y)
+    """
+    cell = first_rule(tilemap)
+    if cell:
+        print('first_rule')
+        return cell
+    cell = second_rule(tilemap, last_move)
+    if cell:
+        print('second_rule')
+        return cell
+    cell = third_rule(tilemap)
+    if cell:
+        print('third_rule')
+        return cell
+    cell = fourth_rule(tilemap, last_move)
+    if cell:
+        print('fourth')
+        return cell
+    cell = fifth_rule(tilemap)
+    if cell:
+        print('fifth_rule')
+        return cell
+    print('sixth_rule')
+    return sixth_rule(tilemap)
 
 
 def get_active_cell(mouse_pos):
