@@ -23,9 +23,10 @@ while True:
                 surf.blit(picture, (act_cell[1] * TILESIZE, act_cell[0] * TILESIZE, TILESIZE, TILESIZE))
                 pygame.display.update()
                 act_cell = next_turn(tilemap, act_cell)
-                flag = not flag
-                picture = cross if flag else circle
-                tilemap[act_cell[0]][act_cell[1]] = CROSS if flag else CIRCLE
-                surf.blit(picture, (act_cell[1] * TILESIZE, act_cell[0] * TILESIZE, TILESIZE, TILESIZE))
-            pygame.display.update()
+                if act_cell:
+                    flag = not flag
+                    picture = cross if flag else circle
+                    tilemap[act_cell[0]][act_cell[1]] = CROSS if flag else CIRCLE
+                    surf.blit(picture, (act_cell[1] * TILESIZE, act_cell[0] * TILESIZE, TILESIZE, TILESIZE))
+    pygame.display.update()
 
